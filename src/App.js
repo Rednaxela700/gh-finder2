@@ -13,6 +13,7 @@ class App extends Component {
 
   state = {
     users: [],
+    repos: [],
     loading: false,
     alert: null,
     user: {}
@@ -45,6 +46,13 @@ class App extends Component {
     this.setState({ user: res.data })
     this.setState({ loading: false })
   }
+  // get user repositories
+getUserRepos = async (username) => {
+  this.setState({ loading: true })
+  const res = await axios.get(`https://api.github.com/users/${username}/repos?per_page=5&sort=created:asc`)
+  this.setState({ repos: res.data })
+  this.setState({ loading: false })
+}
   clearUsers = () => {
     this.setState({ user: [], loading: false })
   }
@@ -65,7 +73,7 @@ class App extends Component {
         console.log("%c Wrong createFaIcon parameter", "color: red")
       );
   render() {
-    const { loading, users, alert, user } = this.state
+    const { loading, users, alert, user, repos } = this.state
     return (
       <Router>
         <div className="App">
@@ -85,7 +93,7 @@ class App extends Component {
               <Route path='/about' exact component={About} />
               <Route path='/user/:login' exact render={props => (
                 // following spread operator inherits whatever props are passed as render parameter
-                <User {...props} getUser={this.getUser} user={user} loading={loading} />
+                <User {...props} getUser={this.getUser} user={user} getUserRepos={this.getUserRepos} repos={repos} loading={loading} />
               )}></Route>
             </Switch>
 
