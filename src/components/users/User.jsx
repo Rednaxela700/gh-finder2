@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from "react";
 import Spinner from "../layout/Spinner";
+import {Repos} from "../repos/Repos"
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 
@@ -7,11 +8,14 @@ export class User extends Component {
     componentDidMount() {
         // param of login is from url set in App.js following Route path.../user/:login
         this.props.getUser(this.props.match.params.login);
+        this.props.getUserRepos(this.props.match.params.login);
     }
     static propTypes = {
         getUser: PropTypes.func.isRequired,
+        getUserRepos: PropTypes.func.isRequired,
         user: PropTypes.object.isRequired,
         loading: PropTypes.bool.isRequired,
+        repos: PropTypes.array.isRequired,
     };
     render() {
         const {
@@ -29,11 +33,12 @@ export class User extends Component {
             hireable,
             company,
         } = this.props.user;
-        const { loading } = this.props;
+        const { loading, repos } = this.props;
         const hireableIcon = hireable
             ? "fas fa-check text-success"
             : "fas fa-times-circle text-danger";
         if (!loading) {
+            console.log(repos)
             return (
                 <Fragment>
                     <Link to="/" className="btn btn-light">
@@ -112,7 +117,7 @@ export class User extends Component {
                         <div className="bagde badge-dark btn">
                             Public gists: {public_gists}
                         </div>
-                    </div>
+                    </div><Repos repos={repos}/>
                 </Fragment>
             );
         }
